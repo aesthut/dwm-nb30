@@ -94,34 +94,35 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* Terminal colors (16 first used in escape sequence) */
+/* Gruvbox Light Medium — identisch zur foot-Palette (footLight) unter niri */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	"#fbf1c7",  /* black   */
+	"#cc241d",  /* red     */
+	"#98971a",  /* green   */
+	"#d79921",  /* yellow  */
+	"#458588",  /* blue    */
+	"#b16286",  /* magenta */
+	"#689d6a",  /* cyan    */
+	"#7c6f64",  /* white   */
 
 	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
+	"#928374",  /* bright black   */
+	"#9d0006",  /* bright red     */
+	"#79740e",  /* bright green   */
+	"#b57614",  /* bright yellow  */
+	"#076678",  /* bright blue    */
+	"#8f3f71",  /* bright magenta */
+	"#427b58",  /* bright cyan    */
+	"#3c3836",  /* bright white   */
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#555555",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
+	"#3c3836", /* 256 cursor          */
+	"#fbf1c7", /* 257 reverse cursor  */
+	"#3c3836", /* 258 default foreground */
+	"#fbf1c7", /* 259 default background */
 };
 
 

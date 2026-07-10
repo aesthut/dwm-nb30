@@ -7,15 +7,16 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+/* Gruvbox Dark Medium — an den niri-/Waybar-Desktop angelehnt, Akzent #d79921 */
+static const char col_bg[]          = "#282828";   /* base00  Hintergrund      */
+static const char col_border[]      = "#504945";   /* base02  Rahmen unfokus.   */
+static const char col_fg[]          = "#ebdbb2";   /* base06  Vordergrund       */
+static const char col_selfg[]       = "#282828";   /* dunkler Text auf Akzent   */
+static const char col_accent[]      = "#d79921";   /* Gruvbox-Ocker (SDDM-Akzent)*/
 static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	/*               fg         bg         border     */
+	[SchemeNorm] = { col_fg,    col_bg,    col_border },
+	[SchemeSel]  = { col_selfg, col_accent, col_accent },
 };
 
 /* tagging */
@@ -57,7 +58,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_accent, "-sf", col_selfg, NULL };
 static const char *termcmd[]  = { "st", NULL };
 
 static const Key keys[] = {
