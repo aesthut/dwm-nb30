@@ -7,10 +7,10 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
-/* Gruvbox Dark Medium — an den niri-/Waybar-Desktop angelehnt, Akzent #d79921 */
-static const char col_bg[]          = "#282828";   /* base00  Hintergrund      */
-static const char col_border[]      = "#504945";   /* base02  Rahmen unfokus.   */
-static const char col_fg[]          = "#ebdbb2";   /* base06  Vordergrund       */
+/* Gruvbox Light — Creme, passend zum st-Terminal (bg0 #fbf1c7), Akzent #d79921 */
+static const char col_bg[]          = "#fbf1c7";   /* bg0   Creme-Hintergrund   */
+static const char col_border[]      = "#bdae93";   /* bg3   Rahmen unfokus.     */
+static const char col_fg[]          = "#3c3836";   /* fg1   dunkler Text        */
 static const char col_selfg[]       = "#282828";   /* dunkler Text auf Akzent   */
 static const char col_accent[]      = "#d79921";   /* Gruvbox-Ocker (SDDM-Akzent)*/
 static const char *colors[][3]      = {
