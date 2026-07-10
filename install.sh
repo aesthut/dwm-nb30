@@ -42,14 +42,18 @@ msg "dwm bauen"
 rm -rf "$WORK/dwm-$DWM_VER"
 tar xzf "$WORK/dwm-$DWM_VER.tar.gz" -C "$WORK"
 cp "$HERE/config.h" "$WORK/dwm-$DWM_VER/config.h"     # unsere Tweaks
-make -C "$WORK/dwm-$DWM_VER" clean install
+make -C "$WORK/dwm-$DWM_VER" clean          # als User bauen
+make -C "$WORK/dwm-$DWM_VER"
+sudo make -C "$WORK/dwm-$DWM_VER" install   # nach /usr/local -> root
 
 # --- 4. st bauen + installieren ------------------------------------------
 msg "st bauen"
 rm -rf "$WORK/st-$ST_VER"
 tar xzf "$WORK/st-$ST_VER.tar.gz" -C "$WORK"
 cp "$HERE/st-config.h" "$WORK/st-$ST_VER/config.h"    # unsere Tweaks
-make -C "$WORK/st-$ST_VER" clean install
+make -C "$WORK/st-$ST_VER" clean            # als User bauen
+make -C "$WORK/st-$ST_VER"
+sudo make -C "$WORK/st-$ST_VER" install     # nach /usr/local -> root
 
 # --- 5. Start-Wrapper + Session-Eintrag fuer ly --------------------------
 msg "Start-Wrapper -> /usr/local/bin/dwm-run"
