@@ -51,12 +51,19 @@ tar xzf "$WORK/st-$ST_VER.tar.gz" -C "$WORK"
 cp "$HERE/st-config.h" "$WORK/st-$ST_VER/config.h"    # unsere Tweaks
 make -C "$WORK/st-$ST_VER" clean install
 
-# --- 5. Startup (.xinitrc) -----------------------------------------------
+# --- 5. Start-Wrapper + Session-Eintrag fuer ly --------------------------
+msg "Start-Wrapper -> /usr/local/bin/dwm-run"
+sudo install -Dm755 "$HERE/dwm-run" /usr/local/bin/dwm-run
+
+msg "xsession-Eintrag -> /usr/share/xsessions/dwm.desktop (fuer ly)"
+sudo install -Dm644 "$HERE/dwm.desktop" /usr/share/xsessions/dwm.desktop
+
+# 6. .xinitrc nur als Fallback fuer `startx` vom TTY -----------------------
 if [ ! -f "$HOME/.xinitrc" ]; then
-  msg ".xinitrc anlegen"
+  msg ".xinitrc anlegen (Fallback fuer startx)"
   cp "$HERE/xinitrc" "$HOME/.xinitrc"
 else
   msg ".xinitrc existiert bereits -> nicht ueberschrieben (Vorlage: $HERE/xinitrc)"
 fi
 
-msg "Fertig. Start mit:  startx"
+msg "Fertig. Aus- und wieder einloggen -> in ly 'dwm' waehlen (oder: startx)."

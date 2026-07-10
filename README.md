@@ -16,13 +16,19 @@ fertige Ergebnis fuer das Zielgeraet.
 ```sh
 git clone https://github.com/aesthut/dwm-nb30
 cd dwm-nb30
-./install.sh          # pacman-Deps, Build, install nach /usr/local, .xinitrc
-startx                # dwm starten
+./install.sh          # pacman-Deps, Build, install nach /usr/local, xsession + .xinitrc
 ```
+
+Danach **ausloggen** und im Login-Manager **ly** die Session **`dwm`** waehlen.
+(Ohne ly, direkt vom TTY: `startx`.)
 
 `install.sh` laedt die suckless-Releases, verifiziert die Pruefsummen,
 ueberlagert die hier versionierten `config.h` (dwm) bzw. `st-config.h` (st),
-baut und installiert beides.
+baut und installiert beides. Zusaetzlich:
+
+- `/usr/local/bin/dwm-run` — Start-Wrapper (Tastaturlayout, Statusbar, dann dwm)
+- `/usr/share/xsessions/dwm.desktop` — damit **ly** dwm als Session anbietet
+- `~/.xinitrc` — Fallback fuer `startx` vom TTY
 
 ## Tastenbelegung (Auszug)
 
