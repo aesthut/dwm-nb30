@@ -32,20 +32,36 @@ else
 fi
 msg "Distro erkannt: $DISTRO"
 
-# --- 1. Build-Abhaengigkeiten --------------------------------------------
+# --- 1. Build- UND Laufzeit-Abhaengigkeiten ------------------------------
+# Build: -devel/Header fuer dwm+st. Laufzeit: der X-Server allein reicht
+# NICHT — es braucht Videotreiber, Input-Treiber und mindestens einen
+# skalierbaren monospace-Font, sonst startet dwm nicht. Auf echtem Void
+# (2026) verifiziert, jede Zeile war ein realer Abbruch:
+#   xauth               -> startx bricht sonst sofort ab (xauth: not found)
+#   xf86-video-intel    -> GMA 3150; ohne DDX findet Xorg keinen Screen
+#   mesa-dri            -> swrast/GLX-Fallback (echtes HW-GL gibt's auf
+#                          GMA3150 mit aktuellem Mesa ohnehin nicht mehr)
+#   xf86-input-libinput -> sonst laeuft X ohne Tastatur/Maus
+#   dejavu/liberation   -> sonst stirbt dwm mit "no fonts could be loaded"
+#                          (terminus ist Bitmap, loest 'monospace' nicht auf)
+#   dmenu               -> Mod+p Programmstarter
 msg "Abhaengigkeiten installieren"
 case "$DISTRO" in
   arch)
     sudo pacman -S --needed --noconfirm \
         base-devel libx11 libxft libxinerama fontconfig freetype2 \
-        xorg-server xorg-xinit terminus-font curl
+        xorg-server xorg-xinit xorg-xauth \
+        xf86-video-intel mesa xf86-input-libinput \
+        ttf-dejavu ttf-liberation terminus-font dmenu curl
     ;;
   void)
     # Void braucht die -devel-Pakete fuer die Header.
     sudo xbps-install -Sy \
         base-devel libX11-devel libXft-devel libXinerama-devel \
         fontconfig-devel freetype-devel \
-        xorg-server xinit terminus-font curl
+        xorg-server xinit xauth \
+        xf86-video-intel mesa-dri xf86-input-libinput \
+        dejavu-fonts-ttf liberation-fonts-ttf terminus-font dmenu curl
     ;;
 esac
 
