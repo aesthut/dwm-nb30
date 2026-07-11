@@ -45,12 +45,14 @@ msg "Distro erkannt: $DISTRO"
 #   dejavu/liberation   -> sonst stirbt dwm mit "no fonts could be loaded"
 #                          (terminus ist Bitmap, loest 'monospace' nicht auf)
 #   dmenu               -> Mod+p Programmstarter
+#   setxkbmap           -> sonst greift 'setxkbmap de' in dwm-run nicht,
+#                          Layout bleibt US-QWERTY (xkeyboard-config allein reicht nicht)
 msg "Abhaengigkeiten installieren"
 case "$DISTRO" in
   arch)
     sudo pacman -S --needed --noconfirm \
         base-devel libx11 libxft libxinerama fontconfig freetype2 \
-        xorg-server xorg-xinit xorg-xauth \
+        xorg-server xorg-xinit xorg-xauth xorg-setxkbmap \
         xf86-video-intel mesa xf86-input-libinput \
         ttf-dejavu ttf-liberation terminus-font dmenu curl
     ;;
@@ -59,7 +61,7 @@ case "$DISTRO" in
     sudo xbps-install -Sy \
         base-devel libX11-devel libXft-devel libXinerama-devel \
         fontconfig-devel freetype-devel \
-        xorg-server xinit xauth \
+        xorg-server xinit xauth setxkbmap \
         xf86-video-intel mesa-dri xf86-input-libinput \
         dejavu-fonts-ttf liberation-fonts-ttf terminus-font dmenu curl
     ;;
