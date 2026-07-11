@@ -1,0 +1,76 @@
+
+  dwm + tmux — Tastenbelegung NB30            (Beenden: q)
+  Angeglichen an niri am Framework. Mod = Super (Windows-Taste).
+  ============================================================
+
+  PROGRAMME
+    Super+Return          Terminal (st)
+    Super+D               Programmstarter (dmenu)
+    Super+B               Browser (netsurf/surf/luakit)
+    Super+Alt+L           Bildschirm sperren (slock)
+    Super+Shift+7         diesen Spickzettel     [ = Super+Shift+/ ]
+    Super+F1              dito, falls Shift+7 klemmt
+
+  FENSTER
+    Super+Q               Fenster schliessen
+    Super+F               maximieren (Monocle-Layout)
+    Super+Shift+Space     schwebend / gekachelt umschalten
+    Super+Shift+Return    Fenster ins Master-Feld holen (zoom)
+
+  FOKUS
+    Super+J / Super+K     naechstes / voriges Fenster
+    Super+Ab / Super+Auf  dasselbe mit Pfeiltasten
+
+  GROESSE
+    Super+H / Super+L     Master-Feld schmaler / breiter
+    Super+Li / Super+Re   dasselbe mit Pfeiltasten
+    Super+- / Super++     dasselbe
+    Super+I               ein Fenster mehr ins Master-Feld
+    Super+Shift+I         eines weniger
+
+  LAYOUTS & LEISTE
+    Super+T               gekachelt  [ ]=
+    Super+Shift+T         schwebend  ><>
+    Super+F               maximiert  [M]
+    Super+Space           zurueck zum vorigen Layout
+    Super+Shift+B         Statusleiste ein/aus
+
+  TAGS (= Arbeitsflaechen)
+    Super+1 / Super+2     Tag 1 / Tag 2 anzeigen
+    Super+Shift+1 / +2    Fenster auf Tag 1 / 2 schieben
+    Super+0               alle Tags zugleich
+    Super+Tab             zurueck zum vorigen Tag
+
+  SCREENSHOT
+    Druck                 ganzer Bildschirm  -> ~/Bilder/Screenshots/
+    Shift+Druck           Bereich mit der Maus waehlen
+
+  LAUTSTAERKE / HELLIGKEIT
+    Lautstaerketasten     lauter / leiser / stumm
+    Helligkeitstasten     heller / dunkler
+
+  SITZUNG
+    Super+Shift+E         dwm beenden (zurueck zum Login)
+
+  ============================================================
+  tmux — im Terminal. Gleiche Buchstaben, aber ALT statt Super
+  (die Super-Taste kommt im Terminal gar nicht an).
+
+    Alt+Return            Pane teilen (neues Terminal daneben)
+    Alt+Q                 Pane schliessen
+    Alt+H/J/K/L           Pane-Fokus links/unten/oben/rechts
+    Alt+Shift+H/J/K/L     Pane-Groesse in diese Richtung
+    Alt+F                 Pane gross/klein (Zoom)
+    Alt+Space             naechstes Layout
+    Alt+1 ... Alt+4       tmux-Fenster 1-4
+    Alt+C                 neues tmux-Fenster
+
+  Alles Uebrige weiter ueber das Praefix Strg+A:
+    Strg+A dann |         senkrecht teilen
+    Strg+A dann -         waagrecht teilen
+    Strg+A dann R         Konfiguration neu laden
+    Strg+A dann [         Copy-Mode (scrollen, kopieren)
+    Strg+A dann D         Session loslassen (detach)
+
+  Achtung: Alt+F, Alt+L und Alt+C gehoeren in der Shell sonst
+  der Wortbearbeitung. Ersatz fuer Alt+F: Strg+Rechts.

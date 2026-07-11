@@ -1,0 +1,9 @@
+#!/bin/sh
+# dwm-keys — Spickzettel im st-Fenster. Gegenstueck zu niris show-hotkey-overlay.
+# Gebunden auf Super+Shift+7 (also Super+Shift+/) und Super+F1.
+set -eu
+
+KEYS="/usr/local/share/dwm-nb30/keys.txt"
+[ -r "$KEYS" ] || KEYS="$(dirname "$0")/../keys.txt"
+
+exec st -t "dwm — Tastenbelegung" -e less -R "$KEYS"

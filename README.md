@@ -39,23 +39,46 @@ die Pruefsummen, ueberlagert die hier versionierten `config.h` (dwm) bzw.
   (`/usr/local/bin/tty-palette`, beim TTY-Login aus `~/.bash_profile` geladen).
   Wirkt nur auf der echten TTY, in X harmlos.
 
-## Tastenbelegung (Auszug)
+## Tastenbelegung
 
-Mod = **Super** (Windows-Taste).
+Mod = **Super** (Windows-Taste). Die Belegung ist an **niri** (Framework)
+angeglichen, damit dieselben Griffe auf beiden Geraeten sitzen — sie weicht
+daher an vielen Stellen vom dwm-Default ab.
 
-| Taste | Aktion |
-|-------|--------|
-| `Mod+Shift+Enter` | st (Terminal) |
-| `Mod+p` | dmenu |
-| `Mod+1..9` | Tag wechseln |
-| `Mod+Shift+1..9` | Fenster auf Tag |
-| `Mod+j/k` | Fokus wechseln |
-| `Mod+t / f / m` | Layout tile / float / monocle |
-| `Mod+Shift+c` | Fenster schliessen |
-| `Mod+Shift+q` | dwm beenden |
+**Im Zweifel: `Super+Shift+7` (also `Super+Shift+/`) oder `Super+F1`** zeigt den
+vollstaendigen Spickzettel in einem st-Fenster (`keys.txt`).
 
-`Mod+p` braucht **dmenu** (Arch: `sudo pacman -S dmenu`, Void:
-`sudo xbps-install dmenu`), falls gewuenscht.
+| Taste | Aktion | Default war |
+|-------|--------|-------------|
+| `Super+Return` | st (Terminal) | `Super+Shift+Return` |
+| `Super+D` | dmenu | `Super+p` |
+| `Super+B` | Browser (netsurf/surf/luakit) | `togglebar` |
+| `Super+Q` | Fenster schliessen | `Super+Shift+C` |
+| `Super+F` | maximieren (monocle) | Layout float |
+| `Super+J` / `Super+K` | Fokus wechseln | gleich |
+| `Super+H` / `Super+L` | Master-Feld schmaler/breiter | gleich |
+| `Super+1` / `Super+2` | Tag wechseln | gleich |
+| `Super+Shift+1/2` | Fenster auf Tag | gleich |
+| `Super+Shift+Space` | schwebend/gekachelt | gleich |
+| `Super+Shift+B` | Statusleiste ein/aus | `Super+B` |
+| `Super+Alt+L` | sperren (slock) | — |
+| `Druck` / `Shift+Druck` | Screenshot ganz / Bereich (maim) | — |
+| Lautstaerke-/Helligkeitstasten | `vol` / `bright` | — |
+| `Super+Shift+E` | dwm beenden | `Super+Shift+Q` |
+
+Wo niri kein Gegenstueck in dwm hat (Spalten, Overview), liegt die naechst-
+liegende dwm-Aktion auf demselben Griff: `Super+H/L` schiebt in niri den Fokus
+zwischen Spalten, hier veraendert es die Master-Breite.
+
+`install.sh` legt dazu drei Helfer nach `/usr/local/bin`:
+
+- `vol up|down|mute` — nimmt `wpctl` (Pipewire), sonst `amixer` (ALSA)
+- `bright up|down` — `brightnessctl`, sonst folgenlos
+- `dwm-keys` — zeigt `keys.txt` in st
+
+**tmux** (aus [`tmux-nb30`](https://github.com/aesthut/tmux-nb30)) spiegelt diese
+Griffe mit **Alt** statt Super — die Super-Taste kommt im Terminal nicht an.
+Also `Alt+J/K` = Pane-Fokus, `Alt+Q` = Pane zu, `Alt+F` = Zoom.
 
 ## Anpassen
 

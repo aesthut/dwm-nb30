@@ -1,0 +1,29 @@
+#!/bin/sh
+# vol — Lautstaerke, egal ob am NB30 Pipewire oder blankes ALSA laeuft.
+# Von dwm an die XF86Audio*-Tasten gebunden.
+#   vol up | down | mute
+set -eu
+
+STEP=5
+
+case "${1:-}" in
+  up|down|mute) ACTION="$1" ;;
+  *) echo "Aufruf: vol up|down|mute" >&2; exit 1 ;;
+esac
+
+if command -v wpctl >/dev/null 2>&1 && wpctl status >/dev/null 2>&1; then
+  SINK="@DEFAULT_AUDIO_SINK@"
+  case "$ACTION" in
+    up)   wpctl set-volume "$SINK" "${STEP}%+" ;;
+    down) wpctl set-volume "$SINK" "${STEP}%-" ;;
+    mute) wpctl set-mute   "$SINK" toggle ;;
+  esac
+elif command -v amixer >/dev/null 2>&1; then
+  case "$ACTION" in
+    up)   amixer -q sset Master "${STEP}%+" ;;
+    down) amixer -q sset Master "${STEP}%-" ;;
+    mute) amixer -q sset Master toggle ;;
+  esac
+else
+  exit 0   # kein Mixer da — Taste bleibt folgenlos statt Fehler zu werfen
+fi

@@ -1,0 +1,16 @@
+#!/bin/sh
+# bright — Bildschirmhelligkeit. Von dwm an die XF86MonBrightness*-Tasten gebunden.
+#   bright up | down
+# Ohne brightnessctl (oder ohne schreibbares Backlight) passiert nichts.
+set -eu
+
+STEP=5
+
+case "${1:-}" in
+  up)   ARG="${STEP}%+" ;;
+  down) ARG="${STEP}%-" ;;
+  *) echo "Aufruf: bright up|down" >&2; exit 1 ;;
+esac
+
+command -v brightnessctl >/dev/null 2>&1 || exit 0
+brightnessctl -q set "$ARG" 2>/dev/null || exit 0

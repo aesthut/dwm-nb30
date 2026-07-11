@@ -67,6 +67,23 @@ case "$DISTRO" in
     ;;
 esac
 
+# --- 1a. Komfort-Pakete fuer die Keybinds --------------------------------
+# Bedienen die an niri angeglichenen Griffe: slock (Super+Alt+L), maim/slop
+# (Druck / Shift+Druck), brightnessctl (Helligkeitstasten), alsa-utils
+# (amixer als Lautstaerke-Rueckfall ohne Pipewire), netsurf (Super+B).
+# Bewusst NICHT abbruchhart: fehlt eines davon im Repo, bleibt bloss der
+# zugehoerige Griff folgenlos — dwm selbst laeuft trotzdem.
+msg "Komfort-Pakete (Lock, Screenshot, Helligkeit, Lautstaerke, Browser)"
+EXTRA="slock maim slop brightnessctl alsa-utils netsurf"
+for p in $EXTRA; do
+  case "$DISTRO" in
+    arch) sudo pacman -S --needed --noconfirm "$p" >/dev/null 2>&1 \
+            || msg "  Warnung: '$p' nicht installierbar — zugehoeriger Griff bleibt stumm" ;;
+    void) sudo xbps-install -y "$p" >/dev/null 2>&1 \
+            || msg "  Warnung: '$p' nicht installierbar — zugehoeriger Griff bleibt stumm" ;;
+  esac
+done
+
 # --- 1b. JetBrains Mono (kein eigenes Void/Arch-Paket) -------------------
 # dwm/st referenzieren "JetBrains Mono" — kraeftiger + besser lesbar als der
 # duenne Default. Von GitHub holen, falls noch nicht vorhanden. Bei fehlendem
@@ -119,6 +136,17 @@ sudo install -Dm755 "$HERE/dwm-run" /usr/local/bin/dwm-run
 
 msg "xsession-Eintrag -> /usr/share/xsessions/dwm.desktop (fuer ly)"
 sudo install -Dm644 "$HERE/dwm.desktop" /usr/share/xsessions/dwm.desktop
+
+# --- 5b. Helfer der Keybinds + Spickzettel --------------------------------
+# vol/bright kapseln die Unterschiede (Pipewire vs. ALSA, Backlight da oder
+# nicht), damit config.h davon nichts wissen muss. dwm-keys zeigt keys.txt.
+msg "Tastenhelfer -> /usr/local/bin (vol, bright, dwm-keys)"
+for h in vol bright dwm-keys; do
+  sudo install -Dm755 "$HERE/bin/$h" "/usr/local/bin/$h"
+done
+
+msg "Spickzettel -> /usr/local/share/dwm-nb30/keys.txt (Super+Shift+7)"
+sudo install -Dm644 "$HERE/keys.txt" /usr/local/share/dwm-nb30/keys.txt
 
 # 6. .xinitrc nur als Fallback fuer `startx` vom TTY -----------------------
 if [ ! -f "$HOME/.xinitrc" ]; then
