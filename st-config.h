@@ -94,35 +94,35 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* Terminal colors (16 first used in escape sequence) */
-/* Gruvbox Light Medium — identisch zur foot-Palette (footLight) unter niri */
+/* Nord — offizielle Terminal-Palette (nordtheme.com/ports), passend zur dwm-Bar */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"#fbf1c7",  /* black   */
-	"#cc241d",  /* red     */
-	"#98971a",  /* green   */
-	"#d79921",  /* yellow  */
-	"#458588",  /* blue    */
-	"#b16286",  /* magenta */
-	"#689d6a",  /* cyan    */
-	"#7c6f64",  /* white   */
+	"#3b4252",  /* black   (nord1)  */
+	"#bf616a",  /* red     (nord11) */
+	"#a3be8c",  /* green   (nord14) */
+	"#ebcb8b",  /* yellow  (nord13) */
+	"#81a1c1",  /* blue    (nord9)  */
+	"#b48ead",  /* magenta (nord15) */
+	"#88c0d0",  /* cyan    (nord8)  */
+	"#e5e9f0",  /* white   (nord5)  */
 
 	/* 8 bright colors */
-	"#928374",  /* bright black   */
-	"#9d0006",  /* bright red     */
-	"#79740e",  /* bright green   */
-	"#b57614",  /* bright yellow  */
-	"#076678",  /* bright blue    */
-	"#8f3f71",  /* bright magenta */
-	"#427b58",  /* bright cyan    */
-	"#3c3836",  /* bright white   */
+	"#4c566a",  /* bright black   (nord3)  */
+	"#bf616a",  /* bright red     (nord11) */
+	"#a3be8c",  /* bright green   (nord14) */
+	"#ebcb8b",  /* bright yellow  (nord13) */
+	"#81a1c1",  /* bright blue    (nord9)  */
+	"#b48ead",  /* bright magenta (nord15) */
+	"#8fbcbb",  /* bright cyan    (nord7)  */
+	"#eceff4",  /* bright white   (nord6)  */
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#3c3836", /* 256 cursor          */
-	"#fbf1c7", /* 257 reverse cursor  */
-	"#3c3836", /* 258 default foreground */
-	"#fbf1c7", /* 259 default background */
+	"#d8dee9", /* 256 cursor          (nord4) */
+	"#2e3440", /* 257 reverse cursor  (nord0) */
+	"#d8dee9", /* 258 default foreground (nord4) */
+	"#2e3440", /* 259 default background (nord0) */
 };
 
 

@@ -5,8 +5,8 @@ Laeuft auf **Arch Linux** oder **Void Linux** — `install.sh` erkennt die Distr
 selbst (pacman/xbps). Entwickelt/getestet in einem Xephyr-Playground auf NixOS,
 hier landet nur das fertige Ergebnis fuer das Zielgeraet.
 
-Farbschema: **Gruvbox Light (Creme)** — bg `#fbf1c7`, fg `#3c3836`, Akzent
-`#d79921`. dwm-Bar, st und die TTY-Konsole ziehen dasselbe Creme wie
+Farbschema: **Nord (Polar Night, dunkel)** — bg `#2e3440`, fg `#d8dee9`, Akzent
+Frost-Cyan `#88c0d0`. dwm-Bar, st und die TTY-Konsole ziehen dasselbe Nord wie
 [`tmux-nb30`](https://github.com/aesthut/tmux-nb30).
 
 ## Gepinnte Versionen
@@ -21,7 +21,7 @@ Farbschema: **Gruvbox Light (Creme)** — bg `#fbf1c7`, fg `#3c3836`, Akzent
 ```sh
 git clone https://github.com/aesthut/dwm-nb30
 cd dwm-nb30
-./install.sh          # Distro erkennen, Deps, Build, install, xsession, Creme-Konsole
+./install.sh          # Distro erkennen, Deps, Build, install, xsession, Nord-Konsole
 ```
 
 Danach **ausloggen** und im Login-Manager **ly** die Session **`dwm`** waehlen.
@@ -34,9 +34,9 @@ die Pruefsummen, ueberlagert die hier versionierten `config.h` (dwm) bzw.
 - `/usr/local/bin/dwm-run` — Start-Wrapper (Tastaturlayout, Statusbar, dann dwm)
 - `/usr/share/xsessions/dwm.desktop` — damit **ly** dwm als Session anbietet
 - `~/.xinitrc` — Fallback fuer `startx` vom TTY
-- **Creme-Konsole**: Terminus-Font (`FONT=ter-116n` in `/etc/vconsole.conf` auf
-  Arch bzw. `/etc/rc.conf` auf Void) + Gruvbox-Light-Palette
-  (`/usr/local/bin/gruvbox-creme`, beim TTY-Login aus `~/.bash_profile` geladen).
+- **Nord-Konsole**: Terminus-Font (`FONT=ter-116n` in `/etc/vconsole.conf` auf
+  Arch bzw. `/etc/rc.conf` auf Void) + Nord-Palette
+  (`/usr/local/bin/tty-palette`, beim TTY-Login aus `~/.bash_profile` geladen).
   Wirkt nur auf der echten TTY, in X harmlos.
 
 ## Tastenbelegung (Auszug)

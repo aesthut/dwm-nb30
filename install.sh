@@ -3,7 +3,7 @@
 # dwm + st Installer fuer das Samsung NB30 — Arch Linux ODER Void Linux.
 # Baut dwm 6.5 und st 0.9.3 aus gepinnten suckless-Releases, ueberlagert die
 # hier versionierten config.h und installiert systemweit nach /usr/local.
-# Zusaetzlich: cremige Gruvbox-Konsole (Terminus-Font + TTY-Palette).
+# Zusaetzlich: Nord-Textkonsole (Terminus-Font + TTY-Palette).
 #
 # Aufruf auf dem NB30 (nach `git clone`):
 #     ./install.sh
@@ -110,7 +110,7 @@ else
   msg ".xinitrc existiert bereits -> nicht ueberschrieben (Vorlage: $HERE/xinitrc)"
 fi
 
-# --- 7. Cremige TTY-Konsole (Terminus-Font + Gruvbox-Palette) -------------
+# --- 7. Nord-TTY-Konsole (Terminus-Font + Nord-Palette) -------------------
 # Font wird beim Boot vom jeweiligen Init gesetzt; Distros unterscheiden sich.
 msg "Konsolen-Font Terminus setzen ($DISTRO)"
 case "$DISTRO" in
@@ -130,15 +130,18 @@ esac
 # sofort anwenden (nur auf echter TTY sinnvoll; in X harmlos)
 sudo setfont ter-116n 2>/dev/null || true
 
-msg "Gruvbox-Creme-Palette -> /usr/local/bin/gruvbox-creme"
-sudo install -Dm755 "$HERE/console/gruvbox-creme.sh" /usr/local/bin/gruvbox-creme
+msg "Nord-TTY-Palette -> /usr/local/bin/tty-palette"
+sudo install -Dm755 "$HERE/console/tty-palette.sh" /usr/local/bin/tty-palette
+sudo rm -f /usr/local/bin/gruvbox-creme   # frueheren Creme-Stand aufraeumen
 
 # beim TTY-Login laden (idempotent in ~/.bash_profile eintragen)
 PROFILE="$HOME/.bash_profile"
-LINE='[ -x /usr/local/bin/gruvbox-creme ] && . /usr/local/bin/gruvbox-creme'
+LINE='[ -x /usr/local/bin/tty-palette ] && . /usr/local/bin/tty-palette'
+# alte Creme-Zeile(n) entfernen, falls von einem frueheren Lauf vorhanden
+sed -i '/gruvbox-creme/d; /Creme-Konsole/d' "$PROFILE" 2>/dev/null || true
 if ! grep -qF "$LINE" "$PROFILE" 2>/dev/null; then
   msg "Palette in ~/.bash_profile einhaengen (nur TTY-Login)"
-  { echo ''; echo '# Creme-Konsole (nur TTY) — dwm-nb30'; echo "$LINE"; } >> "$PROFILE"
+  { echo ''; echo '# TTY-Palette (nur TTY) — dwm-nb30'; echo "$LINE"; } >> "$PROFILE"
 fi
 
 msg "Fertig. Aus- und wieder einloggen -> in ly 'dwm' waehlen (oder: startx)."

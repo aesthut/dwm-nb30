@@ -7,12 +7,12 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
-/* Gruvbox Light — Creme, passend zum st-Terminal (bg0 #fbf1c7), Akzent #d79921 */
-static const char col_bg[]          = "#fbf1c7";   /* bg0   Creme-Hintergrund   */
-static const char col_border[]      = "#bdae93";   /* bg3   Rahmen unfokus.     */
-static const char col_fg[]          = "#3c3836";   /* fg1   dunkler Text        */
-static const char col_selfg[]       = "#282828";   /* dunkler Text auf Akzent   */
-static const char col_accent[]      = "#d79921";   /* Gruvbox-Ocker (SDDM-Akzent)*/
+/* Nord — Polar Night (dunkel), Akzent Frost-Cyan #88c0d0, passend zum st-Terminal */
+static const char col_bg[]          = "#2e3440";   /* nord0  Polar-Night-Grund  */
+static const char col_border[]      = "#4c566a";   /* nord3  Rahmen unfokus.     */
+static const char col_fg[]          = "#d8dee9";   /* nord4  heller Text        */
+static const char col_selfg[]       = "#2e3440";   /* dunkler Text auf Akzent   */
+static const char col_accent[]      = "#88c0d0";   /* nord8  Frost-Cyan (aktiv) */
 static const char *colors[][3]      = {
 	/*               fg         bg         border     */
 	[SchemeNorm] = { col_fg,    col_bg,    col_border },
