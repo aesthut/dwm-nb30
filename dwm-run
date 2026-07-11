@@ -5,15 +5,10 @@
 # Tastaturlayout (oesterreichisch/deutsch). Bei Bedarf anpassen/entfernen.
 setxkbmap de 2>/dev/null
 
-# Schlichte Statusbar: Datum/Uhrzeit + Akku, alle 30s in den WM-Namen.
-# Laeuft im Hintergrund, endet mit der X-Session.
-while :; do
-    bat=""
-    [ -r /sys/class/power_supply/BAT0/capacity ] && \
-        bat=" | Bat $(cat /sys/class/power_supply/BAT0/capacity)%"
-    xsetroot -name "$(date '+%a %d.%m. %H:%M')$bat"
-    sleep 30
-done &
+# Statusbar: Lautstaerke, Last, Speicher, WLAN, Akku (mit Restzeit), Datum.
+# Laeuft im Hintergrund, endet mit der X-Session. vol/bright stossen die Zeile
+# nach jedem Tastendruck zusaetzlich sofort an (dwm-status --once).
+dwm-status &
 
 # dwm starten (ersetzt diesen Prozess -> Session endet, wenn dwm endet).
 exec dwm

@@ -27,3 +27,7 @@ elif command -v amixer >/dev/null 2>&1; then
 else
   exit 0   # kein Mixer da — Taste bleibt folgenlos statt Fehler zu werfen
 fi
+
+# Statuszeile sofort nachziehen, statt bis zum naechsten 10s-Takt zu warten.
+[ -n "${DISPLAY:-}" ] && command -v dwm-status >/dev/null 2>&1 && dwm-status --once
+exit 0

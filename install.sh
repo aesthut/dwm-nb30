@@ -70,11 +70,23 @@ esac
 # --- 1a. Komfort-Pakete fuer die Keybinds --------------------------------
 # Bedienen die an niri angeglichenen Griffe: slock (Super+Alt+L), maim/slop
 # (Druck / Shift+Druck), brightnessctl (Helligkeitstasten), alsa-utils
-# (amixer als Lautstaerke-Rueckfall ohne Pipewire), netsurf (Super+B).
+# (amixer als Lautstaerke-Rueckfall ohne Pipewire).
+#
+# Browser (Super+B ruft 'browser' aus tmux-nb30, das den ersten Fund nimmt):
+#   luakit       WebKitGTK, vim-artig — der Alltagsbrowser. ~250-400 MB je Tab,
+#                bei 2 GB RAM also ein bis zwei Tabs.
+#   firefox-esr  schwer (~500 MB Grundlast, traeger Start auf dem N450), aber
+#                die einzige Engine, an der Bank-Logins/2FA nicht scheitern.
+#                Gezielt ueber 'browser --firefox'.
+#   w3m          Terminal-Browser fuers blosse Nachschlagen — braucht kein X
+#                und laeuft direkt im tmux. Der schnellste Weg auf dem Geraet.
+# netsurf ist bewusst NICHT dabei: eigene Engine ohne brauchbares JavaScript —
+# zu schwach fuer echte Seiten, zu schwer fuer das, was w3m besser kann.
+#
 # Bewusst NICHT abbruchhart: fehlt eines davon im Repo, bleibt bloss der
 # zugehoerige Griff folgenlos — dwm selbst laeuft trotzdem.
-msg "Komfort-Pakete (Lock, Screenshot, Helligkeit, Lautstaerke, Browser)"
-EXTRA="slock maim slop brightnessctl alsa-utils netsurf"
+msg "Komfort-Pakete (Lock, Screenshot, Helligkeit, Lautstaerke, WLAN-Anzeige, Browser)"
+EXTRA="slock maim slop brightnessctl alsa-utils iw luakit firefox-esr w3m"
 for p in $EXTRA; do
   case "$DISTRO" in
     arch) sudo pacman -S --needed --noconfirm "$p" >/dev/null 2>&1 \
@@ -140,8 +152,8 @@ sudo install -Dm644 "$HERE/dwm.desktop" /usr/share/xsessions/dwm.desktop
 # --- 5b. Helfer der Keybinds + Spickzettel --------------------------------
 # vol/bright kapseln die Unterschiede (Pipewire vs. ALSA, Backlight da oder
 # nicht), damit config.h davon nichts wissen muss. dwm-keys zeigt keys.txt.
-msg "Tastenhelfer -> /usr/local/bin (vol, bright, dwm-keys)"
-for h in vol bright dwm-keys; do
+msg "Tastenhelfer + Statuszeile -> /usr/local/bin (vol, bright, dwm-keys, dwm-status)"
+for h in vol bright dwm-keys dwm-status; do
   sudo install -Dm755 "$HERE/bin/$h" "/usr/local/bin/$h"
 done
 

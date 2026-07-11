@@ -1,0 +1,144 @@
+#!/bin/sh
+# dwm-status — Statuszeile der dwm-Bar (vanilla-Weg: xsetroot -name).
+#
+#   dwm-status            Schleife, alle 10s (so ruft dwm-run es auf)
+#   dwm-status --once     einmal schreiben (so rufen vol/bright es auf,
+#                         damit die Anzeige sofort und nicht erst in 10s folgt)
+#
+# Alles kommt aus /proc und /sys — auf dem N450 soll die Leiste nicht selbst
+# die CPU beschaeftigen. Einzige Subprozesse: der Mixer und xsetroot.
+#
+#   VOL 60% · CPU 0.42 · RAM 41% · NET 72% · BAT 87% ↓3:12 · Fr 11.07 17:42
+
+INTERVAL=10
+
+# --- Lautstaerke ----------------------------------------------------------
+vol_part() {
+	if command -v wpctl >/dev/null 2>&1 && v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null); then
+		case "$v" in
+			*MUTED*) echo "VOL stumm"; return ;;
+		esac
+		# "Volume: 0.60" -> 60
+		p=$(echo "$v" | awk '{printf "%d", $2 * 100}')
+		echo "VOL ${p}%"
+	elif command -v amixer >/dev/null 2>&1 && a=$(amixer get Master 2>/dev/null); then
+		case "$a" in
+			*'[off]'*) echo "VOL stumm"; return ;;
+		esac
+		p=$(echo "$a" | grep -o '\[[0-9]*%\]' | head -1 | tr -d '[]%')
+		[ -n "$p" ] && echo "VOL ${p}%"
+	fi
+}
+
+# --- CPU-Last (1-Minute-Schnitt) -----------------------------------------
+cpu_part() {
+	read -r l1 _ < /proc/loadavg 2>/dev/null || return
+	echo "CPU $l1"
+}
+
+# --- Speicher: belegt in Prozent (bei 2 GB der kritische Wert) -----------
+ram_part() {
+	[ -r /proc/meminfo ] || return
+	awk '/^MemTotal:/     {t=$2}
+	     /^MemAvailable:/ {a=$2}
+	     END { if (t > 0) printf "RAM %d%%", (t - a) * 100 / t }' /proc/meminfo
+}
+
+# --- WLAN: Signalstaerke ueber iw (nl80211) ------------------------------
+# NICHT ueber /proc/net/wireless: das ist der alte WEXT-Pfad, den neuere Kernel
+# gar nicht mehr anlegen. Der sysfs-Marker .../wireless dagegen ist verlaesslich.
+net_part() {
+	iface=""
+	for w in /sys/class/net/*/wireless; do
+		[ -d "$w" ] || continue
+		iface=$(basename "$(dirname "$w")")
+		break
+	done
+	[ -n "$iface" ] || return                       # gar kein WLAN — Feld weglassen
+
+	state=$(cat "/sys/class/net/$iface/operstate" 2>/dev/null)
+	[ "$state" = "up" ] || { echo "NET —"; return; }
+
+	if command -v iw >/dev/null 2>&1; then
+		# "signal: -52 dBm" -> Prozent. -50 dBm und besser gilt als voll,
+		# -100 dBm als nichts; dazwischen linear.
+		dbm=$(iw dev "$iface" link 2>/dev/null | awk '/signal:/ { print $2; exit }')
+		if [ -n "$dbm" ]; then
+			p=$(( 2 * (dbm + 100) ))
+			[ "$p" -gt 100 ] && p=100
+			[ "$p" -lt 0 ] && p=0
+			echo "NET ${p}%"
+			return
+		fi
+	elif [ -r /proc/net/wireless ]; then            # alter Kernel mit WEXT
+		q=$(awk 'NR > 2 { gsub(/\./, "", $3); print $3; exit }' /proc/net/wireless)
+		if [ -n "$q" ] && [ "$q" -gt 0 ] 2>/dev/null; then
+			p=$((q * 100 / 70))
+			[ "$p" -gt 100 ] && p=100
+			echo "NET ${p}%"
+			return
+		fi
+	fi
+
+	echo "NET ok"                                   # verbunden, Staerke unbekannt
+}
+
+# --- Akku: Prozent, Richtung, geschaetzte Restzeit ------------------------
+bat_part() {
+	# BAT0 auf dem NB30; andere Geraete nennen ihn BAT1 — den ersten nehmen.
+	B=""
+	for b in /sys/class/power_supply/BAT*; do
+		[ -r "$b/capacity" ] && { B="$b"; break; }
+	done
+	[ -n "$B" ] || return
+	cap=$(cat "$B/capacity")
+	stat=$(cat "$B/status" 2>/dev/null)
+
+	case "$stat" in
+		Charging) arrow="↑" ;;
+		Full)     echo "BAT ${cap}% ✓"; return ;;
+		*)        arrow="↓" ;;
+	esac
+
+	# Restzeit: energy_now/power_now (Wh/W) oder charge_now/current_now (Ah/A).
+	# Beim Laden zaehlt der Weg bis voll, beim Entladen der bis leer.
+	now=""; rate=""
+	if [ -r "$B/energy_now" ] && [ -r "$B/power_now" ]; then
+		now=$(cat "$B/energy_now"); rate=$(cat "$B/power_now")
+		full=$(cat "$B/energy_full" 2>/dev/null)
+	elif [ -r "$B/charge_now" ] && [ -r "$B/current_now" ]; then
+		now=$(cat "$B/charge_now"); rate=$(cat "$B/current_now")
+		full=$(cat "$B/charge_full" 2>/dev/null)
+	fi
+
+	if [ -n "$rate" ] && [ "$rate" -gt 0 ] 2>/dev/null; then
+		if [ "$arrow" = "↑" ] && [ -n "$full" ]; then
+			left=$((full - now))
+		else
+			left="$now"
+		fi
+		mins=$((left * 60 / rate))
+		printf 'BAT %s%% %s%d:%02d\n' "$cap" "$arrow" $((mins / 60)) $((mins % 60))
+	else
+		echo "BAT ${cap}% ${arrow}"
+	fi
+}
+
+status_line() {
+	out=""
+	for part in "$(vol_part)" "$(cpu_part)" "$(ram_part)" "$(net_part)" "$(bat_part)" "$(date '+%a %d.%m %H:%M')"; do
+		[ -n "$part" ] || continue
+		if [ -z "$out" ]; then out="$part"; else out="$out · $part"; fi
+	done
+	xsetroot -name "$out"
+}
+
+if [ "${1:-}" = "--once" ]; then
+	status_line
+	exit 0
+fi
+
+while :; do
+	status_line
+	sleep "$INTERVAL"
+done

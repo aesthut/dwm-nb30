@@ -70,11 +70,51 @@ Wo niri kein Gegenstueck in dwm hat (Spalten, Overview), liegt die naechst-
 liegende dwm-Aktion auf demselben Griff: `Super+H/L` schiebt in niri den Fokus
 zwischen Spalten, hier veraendert es die Master-Breite.
 
-`install.sh` legt dazu drei Helfer nach `/usr/local/bin`:
+`install.sh` legt dazu vier Helfer nach `/usr/local/bin`:
 
 - `vol up|down|mute` — nimmt `wpctl` (Pipewire), sonst `amixer` (ALSA)
 - `bright up|down` — `brightnessctl`, sonst folgenlos
 - `dwm-keys` — zeigt `keys.txt` in st
+- `dwm-status` — die Statuszeile (siehe unten)
+
+## Statuszeile
+
+`dwm-run` startet `dwm-status`, das alle 10 s in den WM-Namen schreibt
+(vanilla-Weg, kein Patch):
+
+```
+VOL 60% · CPU 0.42 · RAM 41% · NET 72% · BAT 87% ↓3:12 · Fr 11.07 17:42
+```
+
+- **RAM** — belegt in Prozent. Bei 2 GB der wichtigste Wert: man sieht kommen,
+  dass es eng wird (Firefox!), bevor die Kiste ins Swappen faellt.
+- **CPU** — Load average (1 min). Ueber ~2 wartet man auf dem N450 spuerbar.
+- **NET** — WLAN-Signal via `iw` (nl80211). `—` = nicht verbunden. Ohne WLAN-
+  Interface faellt das Feld ganz weg.
+- **BAT** — Prozent, `↑`/`↓` und **geschaetzte Restzeit** aus `energy_now`/
+  `power_now` (bzw. `charge_now`/`current_now`).
+- **VOL** — sonst drueckt man blind auf die Lautstaerketasten.
+
+`vol` und `bright` rufen nach jedem Tastendruck `dwm-status --once` auf, damit
+die Anzeige sofort folgt statt erst im naechsten 10-s-Takt. Ein Durchlauf liest
+nur `/proc` und `/sys` und kostet ~30 ms.
+
+## Browser
+
+`Super+B` ruft `browser` (aus [`tmux-nb30`](https://github.com/aesthut/tmux-nb30)),
+das den ersten vorhandenen nimmt: **luakit** → badwolf → surf.
+
+- **luakit** — WebKitGTK, vim-artig (`o` = URL, `t` = Tab, `/` = suchen).
+  Der Alltagsbrowser. ~250–400 MB je Tab, bei 2 GB also ein bis zwei Tabs.
+- **firefox-esr** — schwer (~500 MB Grundlast, traeger Start), aber die einzige
+  Engine, an der Bank-Logins/2FA verlaesslich nicht scheitern. Gezielt ueber
+  `browser --firefox`.
+- **w3m** — Terminal-Browser fuers blosse Nachschlagen. Braucht kein X, laeuft
+  im tmux, kostet nichts. Auf diesem Geraet der schnellste Weg zu einem Text.
+
+Auf dem GMA 3150 gibt es kein brauchbares Hardware-GL. `browser` setzt darum
+`WEBKIT_DISABLE_COMPOSITING_MODE=1` — ohne das rendert WebKitGTK weisse Seiten
+oder stuerzt ab.
 
 **tmux** (aus [`tmux-nb30`](https://github.com/aesthut/tmux-nb30)) spiegelt diese
 Griffe mit **Alt** statt Super — die Super-Taste kommt im Terminal nicht an.

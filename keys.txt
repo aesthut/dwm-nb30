@@ -6,7 +6,7 @@
   PROGRAMME
     Super+Return          Terminal (st)
     Super+D               Programmstarter (dmenu)
-    Super+B               Browser (netsurf/surf/luakit)
+    Super+B               Browser (luakit)
     Super+Alt+L           Bildschirm sperren (slock)
     Super+Shift+7         diesen Spickzettel     [ = Super+Shift+/ ]
     Super+F1              dito, falls Shift+7 klemmt
@@ -74,3 +74,21 @@
 
   Achtung: Alt+F, Alt+L und Alt+C gehoeren in der Shell sonst
   der Wortbearbeitung. Ersatz fuer Alt+F: Strg+Rechts.
+
+  ============================================================
+  BROWSER
+    Super+B               luakit  (o = URL, t = Tab, / = suchen,
+                                   hjkl = scrollen, d = Tab zu)
+    browser --firefox     Firefox-ESR — nur wenn luakit an einer
+                          Seite scheitert (Bank, 2FA). Zaeh.
+    w3m <URL>             im Terminal, ohne X. Zum Nachschlagen
+                          der schnellste Weg auf diesem Geraet.
+                          (q = raus, B = zurueck, Enter = Link)
+
+  ============================================================
+  STATUSLEISTE (oben rechts)
+    VOL   Lautstaerke
+    CPU   Last im 1-Minuten-Schnitt (ueber 2 wird es zaeh)
+    RAM   belegter Speicher — der kritische Wert bei 2 GB
+    NET   WLAN-Signal  (— = nicht verbunden)
+    BAT   Akku, Pfeil = laedt/entlaedt, dahinter die Restzeit
