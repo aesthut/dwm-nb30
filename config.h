@@ -86,8 +86,12 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,          spawn,          {.v = dmenucmd } },     /* niri: fuzzel     */
 	{ MODKEY,                       XK_b,          spawn,          {.v = browsercmd } },   /* niri: firefox    */
 	{ MODKEY|Mod1Mask,              XK_l,          spawn,          {.v = lockcmd } },      /* niri: swaylock   */
-	{ MODKEY|ShiftMask,             XK_slash,      spawn,          {.v = keyscmd } },      /* niri: Hotkey-Overlay */
-	{ MODKEY,                       XK_F1,         spawn,          {.v = keyscmd } },      /* Ausweichgriff, falls / klemmt */
+	/* Spickzettel. Der Griff ist Super+Shift+7 (auf de-Layout also Super+Shift+/),
+	 * gebunden wird aber XK_7 und NICHT XK_slash: dwm vergleicht die ungeshiftete
+	 * Bedeutung der Taste (XkbKeycodeToKeysym mit Level 0). Auf de-Layout ist das
+	 * die "7" — ein XK_slash trifft hier nie ein. Am NB30 verifiziert. */
+	{ MODKEY|ShiftMask,             XK_7,          spawn,          {.v = keyscmd } },
+	{ MODKEY,                       XK_F1,         spawn,          {.v = keyscmd } },      /* zweiter Weg zum selben */
 
 	/* --- Fenster -------------------------------------------------------- */
 	{ MODKEY,                       XK_q,          killclient,     {0} },                  /* niri: close-window */
