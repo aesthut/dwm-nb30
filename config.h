@@ -5,8 +5,8 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const char *fonts[]          = { "JetBrains Mono:style=Medium:size=11" };
+static const char dmenufont[]       = "JetBrains Mono:style=Medium:size=11";
 /* Nord — Polar Night (dunkel), Akzent Frost-Cyan #88c0d0, passend zum st-Terminal */
 static const char col_bg[]          = "#2e3440";   /* nord0  Polar-Night-Grund  */
 static const char col_border[]      = "#4c566a";   /* nord3  Rahmen unfokus.     */

@@ -62,4 +62,12 @@ Mod = **Super** (Windows-Taste).
 - `config.h`     — dwm (Fonts, Farben, Keybinds, Layouts)
 - `st-config.h`  — st (Font, Farben, Scrollback)
 
-Nach Aenderung erneut `./install.sh` laufen lassen.
+**Schrift** ist **JetBrains Mono** (holt `install.sh` von GitHub nach
+`/usr/local/share/fonts` — kraeftiger + besser lesbar als der duenne Default).
+Groesse/Gewicht justieren und danach erneut `./install.sh`:
+
+- st: `st-config.h` → `static char *font = "JetBrains Mono:style=Medium:pixelsize=15…"`
+  — `pixelsize` rauf/runter; `style=Medium` → `Bold` (fetter) oder `Regular` (duenner).
+- dwm-Bar/dmenu: `config.h` → `fonts[]` / `dmenufont` (`size=11`).
+
+Auf dem 1024×600-Display sind `pixelsize=14–16` (st) bzw. `size=10–12` (Bar) sinnvoll.

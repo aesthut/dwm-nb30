@@ -67,6 +67,24 @@ case "$DISTRO" in
     ;;
 esac
 
+# --- 1b. JetBrains Mono (kein eigenes Void/Arch-Paket) -------------------
+# dwm/st referenzieren "JetBrains Mono" — kraeftiger + besser lesbar als der
+# duenne Default. Von GitHub holen, falls noch nicht vorhanden. Bei fehlendem
+# Netz faellt fontconfig still auf einen monospace-Fallback zurueck (kein Abbruch).
+if ! fc-list 2>/dev/null | grep -qi "JetBrains Mono"; then
+  msg "JetBrains Mono laden (Regular/Medium/Bold) -> /usr/local/share/fonts"
+  JBDIR="/usr/local/share/fonts/jetbrains-mono"
+  JBBASE="https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/ttf"
+  for s in Regular Medium Bold; do
+    if curl -fsSL "$JBBASE/JetBrainsMono-$s.ttf" -o "$WORK/JetBrainsMono-$s.ttf"; then
+      sudo install -Dm644 "$WORK/JetBrainsMono-$s.ttf" "$JBDIR/JetBrainsMono-$s.ttf"
+    else
+      msg "  Warnung: JetBrainsMono-$s.ttf nicht ladbar (Netz?) — uebersprungen"
+    fi
+  done
+  sudo fc-cache -f >/dev/null 2>&1 || true
+fi
+
 # --- 2. Quellen holen + verifizieren -------------------------------------
 fetch(){  # name url sha
   local f="$WORK/$1"
