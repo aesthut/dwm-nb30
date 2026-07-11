@@ -44,15 +44,20 @@ msg "Distro erkannt: $DISTRO"
 #   xf86-input-libinput -> sonst laeuft X ohne Tastatur/Maus
 #   dejavu/liberation   -> sonst stirbt dwm mit "no fonts could be loaded"
 #                          (terminus ist Bitmap, loest 'monospace' nicht auf)
-#   dmenu               -> Mod+p Programmstarter
+#   dmenu               -> Programmstarter (Super+D)
 #   setxkbmap           -> sonst greift 'setxkbmap de' in dwm-run nicht,
 #                          Layout bleibt US-QWERTY (xkeyboard-config allein reicht nicht)
+#   xsetroot            -> die Statusleiste. dwm zeichnet sie nicht selbst: der
+#                          Text kommt aus dem Root-Window-Namen, gesetzt per
+#                          'xsetroot -name'. Fehlt das Binary, bleibt die Bar
+#                          stumm — und zwar lautlos, der Fehler geht ins Leere.
+#                          (Am 11.7.2026 real passiert: Leiste blieb leer.)
 msg "Abhaengigkeiten installieren"
 case "$DISTRO" in
   arch)
     sudo pacman -S --needed --noconfirm \
         base-devel libx11 libxft libxinerama fontconfig freetype2 \
-        xorg-server xorg-xinit xorg-xauth xorg-setxkbmap \
+        xorg-server xorg-xinit xorg-xauth xorg-setxkbmap xorg-xsetroot \
         xf86-video-intel mesa xf86-input-libinput \
         ttf-dejavu ttf-liberation terminus-font dmenu curl
     ;;
@@ -61,7 +66,7 @@ case "$DISTRO" in
     sudo xbps-install -Sy \
         base-devel libX11-devel libXft-devel libXinerama-devel \
         fontconfig-devel freetype-devel \
-        xorg-server xinit xauth setxkbmap \
+        xorg-server xinit xauth setxkbmap xsetroot \
         xf86-video-intel mesa-dri xf86-input-libinput \
         dejavu-fonts-ttf liberation-fonts-ttf terminus-font dmenu curl
     ;;
@@ -202,5 +207,45 @@ if ! grep -qF "$LINE" "$PROFILE" 2>/dev/null; then
   { echo ''; echo '# TTY-Palette (nur TTY) — dwm-nb30'; echo "$LINE"; } >> "$PROFILE"
 fi
 
-msg "Fertig. Aus- und wieder einloggen -> in ly 'dwm' waehlen (oder: startx)."
-msg "Die cremige TTY-Palette greift beim naechsten TTY-Login."
+# --- 8. Selbstpruefung ----------------------------------------------------
+# Die Lehre aus sieben stillen Luecken (xauth, Videotreiber, Fonts, dmenu,
+# setxkbmap, xsetroot ...): Fehlt ein Binary, das config.h oder dwm-run
+# voraussetzt, merkt man es nicht — der Aufruf scheitert lautlos ins Leere.
+# Also einmal ehrlich nachsehen und benennen, was fehlt.
+echo
+msg "Selbstpruefung — braucht dwm-run/config.h alles, was es aufruft?"
+FEHLT=""
+check(){ # binary  wofuer
+  if command -v "$1" >/dev/null 2>&1; then
+    printf '  \033[32m✓\033[0m %-14s %s\n' "$1" "$2"
+  else
+    printf '  \033[31m✗\033[0m %-14s %s\n' "$1" "$2"
+    FEHLT="$FEHLT $1"
+  fi
+}
+check st          "Terminal (Super+Return)"
+check dmenu_run   "Programmstarter (Super+D)"
+check xsetroot    "Statusleiste — ohne das bleibt die Bar stumm"
+check setxkbmap   "de-Tastaturlayout"
+check slock       "Bildschirm sperren (Super+Alt+L)"
+check maim        "Screenshot (Druck)"
+check slop        "Screenshot-Auswahl (Shift+Druck)"
+check brightnessctl "Helligkeitstasten"
+check iw          "WLAN-Anzeige in der Statusleiste"
+check luakit      "Browser (Super+B)"
+check w3m         "Terminal-Browser"
+
+if [ -n "$FEHLT" ]; then
+  echo
+  msg "ACHTUNG — es fehlt:$FEHLT"
+  msg "Die zugehoerigen Griffe bleiben stumm. Nachinstallieren:"
+  case "$DISTRO" in
+    arch) echo "    sudo pacman -S$FEHLT" ;;
+    void) echo "    sudo xbps-install -y$FEHLT" ;;
+  esac
+fi
+
+echo
+msg "Fertig. dwm neu starten, damit die neue Binary laeuft:"
+msg "  laufendes dwm beenden -> Super+Shift+E (frueher: Mod+Shift+Q), dann startx"
+msg "Tastenbelegung jederzeit: Super+Shift+7 (oder Super+F1)."
