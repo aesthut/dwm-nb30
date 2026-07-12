@@ -242,7 +242,7 @@ UNIT
 esac
 
 # sofort anwenden, damit man nicht erst neu booten muss
-sudo /usr/local/bin/tty-palette 2>/dev/null || true
+sudo /usr/local/bin/tty-palette || msg "  Warnung: Palette nicht gesetzt — siehe Meldung oben"
 
 # --- 8. Selbstpruefung ----------------------------------------------------
 # Die Lehre aus sieben stillen Luecken (xauth, Videotreiber, Fonts, dmenu,
