@@ -34,10 +34,21 @@ die Pruefsummen, ueberlagert die hier versionierten `config.h` (dwm) bzw.
 - `/usr/local/bin/dwm-run` — Start-Wrapper (Tastaturlayout, Statusbar, dann dwm)
 - `/usr/share/xsessions/dwm.desktop` — damit **ly** dwm als Session anbietet
 - `~/.xinitrc` — Fallback fuer `startx` vom TTY
-- **Nord-Konsole**: Terminus-Font (`FONT=ter-116n` in `/etc/vconsole.conf` auf
-  Arch bzw. `/etc/rc.conf` auf Void) + Nord-Palette
-  (`/usr/local/bin/tty-palette`, beim TTY-Login aus `~/.bash_profile` geladen).
-  Wirkt nur auf der echten TTY, in X harmlos.
+- **Nord-Konsole**: Terminus-Font + `KEYMAP=de-latin1-nodeadkeys` (in
+  `/etc/vconsole.conf` auf Arch bzw. `/etc/rc.conf` auf Void) + Nord-Palette
+  (`console/nord.vtrgb`, gesetzt per `setvtrgb` beim Boot als root — Void ueber
+  `/etc/rc.local`, Arch ueber `tty-palette.service`).
+
+  Das Keymap gehoert hierher, weil `setxkbmap de` in `dwm-run` **nur in X** gilt.
+  Im TTY blieb sonst US-QWERTY, und die Tilde (AltGr+Plus) traf ins Leere.
+  `nodeadkeys`, damit `~ ^ \`` direkt kommen statt als Tottasten.
+
+  Die Palette lief frueher ueber 16 OSC-Sequenzen (`\e]PnRRGGBB`) aus
+  `~/.bash_profile`. Das griff daneben: **Index 0 — der Hintergrund — landete auf
+  dem Nord-Lila `#b48ead` statt auf `#2e3440`**, TTY *und* tmux waren lila
+  unterlegt. Dieselben Sequenzen lassen ausserdem st und tmux haengen, weil die
+  auf einen String-Terminator warten, der bei `\e]P` nie kommt. `setvtrgb` setzt
+  die Kernel-Palette direkt — kein Escape-Parsing, kein Haenger. Braucht `kbd`.
 
 ## Tastenbelegung
 

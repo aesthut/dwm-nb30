@@ -59,7 +59,7 @@ case "$DISTRO" in
         base-devel libx11 libxft libxinerama fontconfig freetype2 \
         xorg-server xorg-xinit xorg-xauth xorg-setxkbmap xorg-xsetroot \
         xf86-video-intel mesa xf86-input-libinput \
-        ttf-dejavu ttf-liberation terminus-font dmenu curl
+        ttf-dejavu ttf-liberation terminus-font dmenu curl kbd
     ;;
   void)
     # Void braucht die -devel-Pakete fuer die Header.
@@ -68,7 +68,7 @@ case "$DISTRO" in
         fontconfig-devel freetype-devel \
         xorg-server xinit xauth setxkbmap xsetroot \
         xf86-video-intel mesa-dri xf86-input-libinput \
-        dejavu-fonts-ttf liberation-fonts-ttf terminus-font dmenu curl
+        dejavu-fonts-ttf liberation-fonts-ttf terminus-font dmenu curl kbd
     ;;
 esac
 
@@ -173,39 +173,76 @@ else
   msg ".xinitrc existiert bereits -> nicht ueberschrieben (Vorlage: $HERE/xinitrc)"
 fi
 
-# --- 7. Nord-TTY-Konsole (Terminus-Font + Nord-Palette) -------------------
-# Font wird beim Boot vom jeweiligen Init gesetzt; Distros unterscheiden sich.
-msg "Konsolen-Font Terminus setzen ($DISTRO)"
+# --- 7. Nord-TTY-Konsole (Font + Keymap + Palette) ------------------------
+# Font und Keymap setzt der jeweilige Init beim Boot; Distros unterscheiden sich.
+#
+# KEYMAP war die achte stille Luecke: 'setxkbmap de' in dwm-run gilt nur in X.
+# Im TTY blieb US-QWERTY — die Tilde (AltGr+Plus) traf ins Leere. de-latin1-
+# nodeadkeys, damit ~ ^ ` direkt kommen und nicht als Tottasten zwei Anschlaege
+# brauchen.
+setkv(){ # datei  schluessel  wert   (idempotent, mit/ohne Anfuehrungszeichen)
+  if sudo grep -q "^$2=" "$1" 2>/dev/null; then
+    sudo sed -i "s|^$2=.*|$2=$3|" "$1"
+  else
+    echo "$2=$3" | sudo tee -a "$1" >/dev/null
+  fi
+}
+
+msg "Konsolen-Font + Tastaturlayout setzen ($DISTRO)"
 case "$DISTRO" in
   arch)  # systemd liest /etc/vconsole.conf
-    if grep -q '^FONT=' /etc/vconsole.conf 2>/dev/null; then
-      sudo sed -i 's/^FONT=.*/FONT=ter-116n/' /etc/vconsole.conf
-    else
-      echo 'FONT=ter-116n' | sudo tee -a /etc/vconsole.conf >/dev/null
-    fi ;;
-  void)  # runit liest FONT aus /etc/rc.conf
-    if grep -q '^FONT=' /etc/rc.conf 2>/dev/null; then
-      sudo sed -i 's/^FONT=.*/FONT="ter-116n"/' /etc/rc.conf
-    else
-      echo 'FONT="ter-116n"' | sudo tee -a /etc/rc.conf >/dev/null
-    fi ;;
+    sudo touch /etc/vconsole.conf
+    setkv /etc/vconsole.conf FONT   ter-116n
+    setkv /etc/vconsole.conf KEYMAP de-latin1-nodeadkeys ;;
+  void)  # runit liest FONT/KEYMAP aus /etc/rc.conf
+    setkv /etc/rc.conf FONT   '"ter-116n"'
+    setkv /etc/rc.conf KEYMAP '"de-latin1-nodeadkeys"' ;;
 esac
 # sofort anwenden (nur auf echter TTY sinnvoll; in X harmlos)
 sudo setfont ter-116n 2>/dev/null || true
+sudo loadkeys de-latin1-nodeadkeys 2>/dev/null || true
 
-msg "Nord-TTY-Palette -> /usr/local/bin/tty-palette"
+# --- Nord-Palette der Textkonsole ---
+# Frueher 16 OSC-Sequenzen (\e]PnRRGGBB) aus ~/.bash_profile. Die griffen daneben:
+# Index 0 (der Hintergrund) landete auf dem Nord-Lila #b48ead statt auf #2e3440,
+# TTY *und* tmux waren lila unterlegt. Jetzt setvtrgb (Kernel-Palette, kein
+# Escape-Parsing) beim Boot als root -> gilt fuer alle TTYs, kein sudo im Login.
+msg "Nord-TTY-Palette (setvtrgb) einrichten"
+sudo install -Dm644 "$HERE/console/nord.vtrgb"   /usr/local/share/dwm-nb30/nord.vtrgb
 sudo install -Dm755 "$HERE/console/tty-palette.sh" /usr/local/bin/tty-palette
 sudo rm -f /usr/local/bin/gruvbox-creme   # frueheren Creme-Stand aufraeumen
 
-# beim TTY-Login laden (idempotent in ~/.bash_profile eintragen)
+# Die alten Palette-Zeilen aus ~/.bash_profile entfernen — sie waren der Bug.
 PROFILE="$HOME/.bash_profile"
-LINE='[ -x /usr/local/bin/tty-palette ] && . /usr/local/bin/tty-palette'
-# alte Creme-Zeile(n) entfernen, falls von einem frueheren Lauf vorhanden
-sed -i '/gruvbox-creme/d; /Creme-Konsole/d' "$PROFILE" 2>/dev/null || true
-if ! grep -qF "$LINE" "$PROFILE" 2>/dev/null; then
-  msg "Palette in ~/.bash_profile einhaengen (nur TTY-Login)"
-  { echo ''; echo '# TTY-Palette (nur TTY) — dwm-nb30'; echo "$LINE"; } >> "$PROFILE"
-fi
+sed -i '/gruvbox-creme/d; /Creme-Konsole/d; /tty-palette/d; /TTY-Palette/d' "$PROFILE" 2>/dev/null || true
+
+# Beim Boot als root setzen (Void: rc.local, Arch: systemd-Unit).
+case "$DISTRO" in
+  void)
+    sudo touch /etc/rc.local
+    if ! sudo grep -q 'tty-palette' /etc/rc.local 2>/dev/null; then
+      echo '/usr/local/bin/tty-palette   # Nord-Palette der Textkonsole (dwm-nb30)' \
+        | sudo tee -a /etc/rc.local >/dev/null
+    fi ;;
+  arch)
+    sudo tee /etc/systemd/system/tty-palette.service >/dev/null <<'UNIT'
+[Unit]
+Description=Nord-Palette der Textkonsole (dwm-nb30)
+After=systemd-vconsole-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/tty-palette
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+    sudo systemctl enable tty-palette.service >/dev/null 2>&1 || true ;;
+esac
+
+# sofort anwenden, damit man nicht erst neu booten muss
+sudo /usr/local/bin/tty-palette 2>/dev/null || true
 
 # --- 8. Selbstpruefung ----------------------------------------------------
 # Die Lehre aus sieben stillen Luecken (xauth, Videotreiber, Fonts, dmenu,
@@ -226,7 +263,9 @@ check(){ # binary  wofuer
 check st          "Terminal (Super+Return)"
 check dmenu_run   "Programmstarter (Super+D)"
 check xsetroot    "Statusleiste — ohne das bleibt die Bar stumm"
-check setxkbmap   "de-Tastaturlayout"
+check setxkbmap   "de-Tastaturlayout in X"
+check setvtrgb    "Nord-Palette der Textkonsole — ohne das bleibt die TTY bunt"
+check loadkeys    "de-Tastaturlayout im TTY (Tilde\!)"
 check slock       "Bildschirm sperren (Super+Alt+L)"
 check maim        "Screenshot (Druck)"
 check slop        "Screenshot-Auswahl (Shift+Druck)"
